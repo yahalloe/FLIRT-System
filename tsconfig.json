@@ -24,11 +24,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@components/*": ["./components/*"],
+      "@components/*": ["src/components/*"],
       "@pages/*": ["./pages/*"],
       "@styles/*": ["./styles/*"]
     }
   },
-  "include": ["src", "components", "pages", "styles"],
+  "include": ["src", "src/components", "pages", "styles"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { customToast } from '../components/ToastProvider';
 import { LoadingSpinner, InlineLoader } from '../components/LoadingSpinner';
-import { Search, Filter, Calendar, MapPin, Package, Loader2, CheckCircle2, AlertCircle, XCircle, Clock, FileText } from 'lucide-react';
+import { Search, Calendar, MapPin, Package, CheckCircle2, AlertCircle, XCircle, Clock, FileText } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000';
 

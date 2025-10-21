@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Search, FileText, ArrowRight, Users, Heart, Shield } from 'lucide-react';
+import { Search, FileText, ArrowRight, Users, Heart, } from 'lucide-react';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 
@@ -48,7 +48,7 @@ export function Home() {
             </div>
 
             {/* Title */}
-            <h1 className="mb-4 text-4xl md:text-5xl lg:text-6xl">FLIRT</h1>
+            <h1 className="mb-4 text-4xl md:text-5xl lg:text-8xl">FLIRT</h1>
             
             {/* Slogan */}
             <p className="text-lg md:text-xl lg:text-2xl text-slate-700 mb-8 max-w-3xl mx-auto leading-relaxed">

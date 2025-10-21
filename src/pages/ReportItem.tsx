@@ -7,9 +7,22 @@ import { Card } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { customToast } from '../components/ToastProvider';
-import { Upload, Loader2, CheckCircle2, AlertCircle, X, Image as ImageIcon, FileText } from 'lucide-react';
+import { Upload, CheckCircle2, AlertCircle, X, Image as ImageIcon, FileText } from 'lucide-react';
 
 const API_URL = 'http://localhost:5000';
+
+// Simple Loading Spinner Component
+function LoadingSpinner({ size = 'sm', className = '' }: { size?: 'sm' | 'md' | 'lg'; className?: string }) {
+  const sizeClasses = {
+    sm: 'w-4 h-4',
+    md: 'w-5 h-5',
+    lg: 'w-6 h-6'
+  };
+  
+  return (
+    <div className={`animate-spin rounded-full border-b-2 border-white ${sizeClasses[size]} ${className}`} />
+  );
+}
 
 export function ReportItem() {
   const [formData, setFormData] = useState({
@@ -67,20 +80,50 @@ export function ReportItem() {
     }
   };
 
+  const validateForm = (): string | null => {
+    // Check required fields
+    if (!formData.name.trim()) return 'Item name is required';
+    if (!formData.description.trim()) return 'Description is required';
+    if (formData.description.trim().length < 10) return 'Description must be at least 10 characters';
+    if (!formData.category) return 'Category is required';
+    if (!formData.status) return 'Status is required';
+    if (!formData.location.trim()) return 'Location is required';
+    if (!formData.date) return 'Date is required';
+
+    // Check name length
+    if (formData.name.trim().length < 3) return 'Item name must be at least 3 characters';
+    if (formData.name.trim().length > 255) return 'Item name must be less than 255 characters';
+
+    // Check location length
+    if (formData.location.trim().length < 3) return 'Location must be at least 3 characters';
+    if (formData.location.trim().length > 255) return 'Location must be less than 255 characters';
+
+    // Check date validity
+    const selectedDate = new Date(formData.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate > today) return 'Date cannot be in the future';
+
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     setSuccess(false);
 
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      customToast.error('Validation Error', validationError);
+      setIsLoading(false);
+      return;
+    }
+
     const toastId = customToast.loading('Submitting your report...');
 
     try {
-      // Validate form data
-      if (formData.description.length < 10) {
-        throw new Error('Description must be at least 10 characters');
-      }
-
       // Get token from localStorage
       const token = localStorage.getItem('flirt_token');
       if (!token) {
@@ -118,7 +161,10 @@ export function ReportItem() {
       // Success!
       setSuccess(true);
       customToast.dismiss(toastId);
-      customToast.success('Item Reported Successfully!', `Your ${formData.status} item has been reported and will be visible to other users.`);
+      customToast.success(
+        'Item Reported Successfully!', 
+        `Your ${formData.status} item has been reported and will be visible to other users.`
+      );
 
       // Reset form after 2 seconds
       setTimeout(() => {
@@ -133,6 +179,7 @@ export function ReportItem() {
         setImageFile(null);
         setImagePreview(null);
         setSuccess(false);
+        setError(null);
       }, 2000);
 
     } catch (err: any) {
@@ -145,6 +192,9 @@ export function ReportItem() {
       setIsLoading(false);
     }
   };
+
+  // Set today's date as default for date input
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div className="min-h-screen bg-[#F8FAFB] py-6 md:py-12 px-4">
@@ -196,9 +246,10 @@ export function ReportItem() {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="mt-2 border-[#D8E6F3] focus:border-[#5B8FB9] focus:ring-[#5B8FB9]"
                 disabled={isLoading}
-                minLength={3}
-                maxLength={255}
               />
+              <p className="text-xs text-[#6B7280] mt-1">
+                {formData.name.length}/255 characters (minimum 3)
+              </p>
             </div>
 
             {/* Description */}
@@ -212,8 +263,6 @@ export function ReportItem() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="mt-2 border-[#D8E6F3] focus:border-[#5B8FB9] focus:ring-[#5B8FB9] min-h-[120px]"
                 disabled={isLoading}
-                minLength={10}
-                maxLength={1000}
               />
               <p className="text-xs text-[#6B7280] mt-1">
                 {formData.description.length}/1000 characters (minimum 10)
@@ -226,7 +275,7 @@ export function ReportItem() {
               <Select 
                 required
                 value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value })}
+                onValueChange={(value: string) => setFormData({ ...formData, category: value })}
                 disabled={isLoading}
               >
                 <SelectTrigger className="mt-2 border-[#D8E6F3] focus:border-[#5B8FB9] focus:ring-[#5B8FB9]">
@@ -250,7 +299,7 @@ export function ReportItem() {
               <Select 
                 required
                 value={formData.status}
-                onValueChange={(value) => setFormData({ ...formData, status: value })}
+                onValueChange={(value: string) => setFormData({ ...formData, status: value })}
                 disabled={isLoading}
               >
                 <SelectTrigger className="mt-2 border-[#D8E6F3] focus:border-[#5B8FB9] focus:ring-[#5B8FB9]">
@@ -274,9 +323,10 @@ export function ReportItem() {
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 className="mt-2 border-[#D8E6F3] focus:border-[#5B8FB9] focus:ring-[#5B8FB9]"
                 disabled={isLoading}
-                minLength={3}
-                maxLength={255}
               />
+              <p className="text-xs text-[#6B7280] mt-1">
+                {formData.location.length}/255 characters (minimum 3)
+              </p>
             </div>
 
             {/* Date */}
@@ -289,7 +339,7 @@ export function ReportItem() {
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                 className="mt-2 border-[#D8E6F3] focus:border-[#5B8FB9] focus:ring-[#5B8FB9]"
-                max={new Date().toISOString().split('T')[0]}
+                max={today}
                 disabled={isLoading}
               />
               <p className="text-xs text-[#6B7280] mt-1">When was the item lost or found?</p>
@@ -303,11 +353,11 @@ export function ReportItem() {
                 <div className="mt-2">
                   <label 
                     htmlFor="image" 
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#D8E6F3] rounded-lg cursor-pointer bg-[#F8FAFB] hover:bg-[#D8E6F3]/20 transition-colors"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#D8E6F3] rounded-lg cursor-pointer bg-[#F8FAFB] hover:bg-[#D8E6F3]/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <Upload className="w-10 h-10 mb-2 text-[#7FAFD9]" />
-                      <p className="mb-1 text-sm text-[#6B7280]">
+                      <p className="mb-1 text-sm text-[#6B7280] text-center">
                         <span className="font-medium">Click to upload</span> or drag and drop
                       </p>
                       <p className="text-xs text-[#6B7280]">JPEG, PNG, GIF, or WebP (Max 5MB)</p>
@@ -333,7 +383,7 @@ export function ReportItem() {
                     <button
                       type="button"
                       onClick={removeImage}
-                      className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors shadow-lg"
+                      className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 transition-colors shadow-lg disabled:opacity-50"
                       disabled={isLoading}
                     >
                       <X className="w-4 h-4" />

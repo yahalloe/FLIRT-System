@@ -1,12 +1,12 @@
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastProvider } from '../components/ToastProvider';
-import { Layout } from '../components/Layout';
-import { Home } from '../pages/Home';
-import { ReportItem } from '../pages/ReportItem';
-import { ClaimItem } from '../pages/ClaimItem';
-import { AdminDashboard } from '../pages/AdminDashboard';
-import { About } from '../pages/About';
-import { Auth } from '../pages/Auth';
+import { ToastProvider } from './components/ToastProvider';
+import { Layout } from './components/Layout';
+import { Home } from './pages/Home';
+import { ReportItem } from './pages/ReportItem';
+import { ClaimItem } from './pages/ClaimItem';
+import { AdminDashboard } from './pages/AdminDashboard';
+import { About } from './pages/About';
+import { Auth } from './pages/Auth';
 
 /**
  * FLIRT App - Main Application Component

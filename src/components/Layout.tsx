@@ -1,8 +1,7 @@
 import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, FileText, Search, LayoutDashboard, Info, Menu, X } from 'lucide-react';
+import { Home, FileText, Search, LayoutDashboard, Info, Menu } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 
 interface LayoutProps {
