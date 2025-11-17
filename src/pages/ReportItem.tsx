@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '../components/ui/alert';
 import { customToast } from '../components/ToastProvider';
 import { Upload, CheckCircle2, AlertCircle, X, Image as ImageIcon, FileText } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = 'http://localhost:5001';
 
 // Simple Loading Spinner Component
 function LoadingSpinner({ size = 'sm', className = '' }: { size?: 'sm' | 'md' | 'lg'; className?: string }) {
